@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <title>shell.fm</title>
+  </head>
+
+  <script language=JavaScript>
+     function setRefresh() {
+        //window.setTimeout("doRefresh()",5000);
+     }
+     function doRefresh() {
+      if ( document.station.stationurl.value == "" ) {
+        document.location="/";
+      }
+     }
+  </script>
+  <body bgcolor=#FFFFFF onload="setRefresh()">
+
+    <b><a href="http://nex.scrapping.cc/shell-fm/">shell.fm</a></b><small> - logged in to last.fm as: <%= Username %></small>
+
+    <p><small>You are connecting from: </small>
+      <b><%= @client_ip %></b></p>
+    
+    <hr/>
+
+    <% if @track_info %>
+      <p><small>Playing: <%= @station_link %></small></p> 
+      <table>
+        <tbody>
+          <tr>
+            <td><small>track : </small>
+            <%= @artist_link %> - <%= @title_link %> 
+            (<%= @track_info[:duration]%>)</td>
+          <tr>
+            <td><small>album : </small>
+            <%= @album_link %> </td>
+          </tr>
+          <tr>
+            <td><small>remaining time : </small>
+            <%= @track_info[:remaining]%></td>
+          </tr>
+          <tr>
+            <td align=right><br><%= @album_image %></td>
+            <td><br>  
+              <ul style='list-style-type: none;'>
+                <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
+                  <li>
+                    <a href="/?cmd='<%= cmd %>'">
+                      <input type=button value='<%= CmdTitles[cmd] %>'> 
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+    <% else %>
+      <p><b>Cannot connect to shell.fm</b></p> 
+    <% end %>
+    
+    <% if @flash %>
+      <hr>
+      <h3><%= @flash %></h3>
+    <% end %>
+    <hr>
+    <form name=station method=get>
+      <p>Visit Station
+        <input name=stationurl size=30 value="<%= @track_info[:station_url] if @track_info %>">
+        <input type=hidden name=cmd value='play'>
+        <input type=submit value='play'>
+      </p>
+      <p>Recent Stations 
+        <select name=stationselect onchange="submit()">
+          <option value=''></option>
+          <% radio_history.each do |r|
+            unless r == "" %>
+              <option value='<%= r %>'><%= r %></option>
+            <% end %>
+          <% end %>
+        </select>
+      </p>
+      <p>Bookmarked Stations
+        <select name=bookmarkselect onchange="submit()">
+          <option value=''></option>
+          <% bookmarks.each do |k, v|
+            unless v == "" %>
+              <option value='<%= v %>'><%= "#{k}: #{v}" %></option>
+            <% end %>
+          <% end %>
+        </select>
+      </p>
+    </form>
+  </body>
+</html>
