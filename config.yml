@@ -1,11 +1,11 @@
 ---
 # Testing:
 #----------------
-#interface: eth0
-#port: 54311
-#ip_override: 192.168.1.38
+interface: eth0
+port: 54311
+ip_override: 192.168.1.38
 
 # Live:
 #----------------
-interface: wlan0
-port: 54311
+#interface: wlan0
+#port: 54311

@@ -5,17 +5,15 @@
 
   <script language=JavaScript>
      function setRefresh() {
-        //window.setTimeout("doRefresh()",5000);
+        window.setTimeout("doRefresh()",7000);
      }
      function doRefresh() {
-      if ( document.station.stationurl.value == "" ) {
         document.location="/";
-      }
      }
   </script>
   <body bgcolor=#FFFFFF onload="setRefresh()">
 
-    <b><a href="http://nex.scrapping.cc/shell-fm/">shell.fm</a></b><small> - logged in to last.fm as: <%= Username %></small>
+    <b><a href="/">shell.fm server</a></b><small> - logged in to last.fm as: <%= Username %></small>
 
     <p><small>You are connecting from: </small>
       <b><%= @client_ip %></b></p>
@@ -28,15 +26,14 @@
         <tbody>
           <tr>
             <td><small>track : </small>
-            <%= @artist_link %> - <%= @title_link %> 
-            (<%= @track_info[:duration]%>)</td>
+            <%= @artist_link %> - <%= @title_link %></td>
           <tr>
             <td><small>album : </small>
             <%= @album_link %> </td>
           </tr>
           <tr>
             <td><small>remaining time : </small>
-            <%= @track_info[:remaining]%></td>
+            <%= @track_info[:remaining]%> / (<%= @track_info[:duration]%>)</td>
           </tr>
           <tr>
             <td align=right><br><%= @album_image %></td>
@@ -44,7 +41,7 @@
               <ul style='list-style-type: none;'>
                 <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
                   <li>
-                    <a href="/?cmd='<%= cmd %>'">
+                    <a href="/?cmd=<%= cmd %>">
                       <input type=button value='<%= CmdTitles[cmd] %>'> 
                     </a>
                   </li>

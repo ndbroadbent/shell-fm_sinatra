@@ -36,7 +36,7 @@ Username   = sfm_config[/username ?= ?(.*)$/,1]
 get '/' do
   @client_ip = @env['REMOTE_ADDR']
   @flash = nil
-  
+ 
   case params[:cmd]
   when "pause", "skip", "love", "ban", "stop"
     shellfmcmd(params[:cmd])
@@ -59,6 +59,10 @@ get '/' do
     shellfmcmd("play lastfm://#{station}")
     @flash = "Changed shell.fm station to: '#{station}'"
   end  
+  
+  # Pause for our changes to work.
+  sleep 4 if params[:cmd]
+  
   if i = get_info
     @station_link = link_to(i[:station_url], i[:station])
     @artist_link  = link_to(i[:artist_url],  i[:artist])
