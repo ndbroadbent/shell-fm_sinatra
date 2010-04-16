@@ -58,36 +58,43 @@ get '/' do
               params[:stationurl]
     shellfmcmd("play lastfm://#{station}")
     @flash = "Changed shell.fm station to: '#{station}'"
-  end  
-  
-  # Pause for our changes to work.
-  sleep 4 if params[:cmd]
+  end   
   
   if i = get_info
+    i[:image_url] = nil if i[:image_url] == ""
     @station_link = link_to(i[:station_url], i[:station])
     @artist_link  = link_to(i[:artist_url],  i[:artist])
     @title_link   = link_to(i[:title_url],   i[:title])
     @album_link   = link_to(i[:album_url],   i[:album])
-    @album_image   = "<img src='#{i[:image_url]}'>"
+    @album_image  = i[:image_url] ? "<img src='#{i[:image_url]}'>" : "No Album Image."
   end
   @track_info = i
   erb :index  
 end
 
 def shellfmcmd(cmd) 
-  return `echo "#{cmd}" | nc -w 1 #{IP} #{PORT} 2>&1`
+  # return `echo "#{cmd}" | nc -w 1 #{IP} #{PORT} 2>&1`
+  t = TCPSocket.new(IP, PORT)
+  t.print cmd + "\n"
+  info = t.gets(nil)
+  t.close
+  return info
+  rescue
+    puts "TCP error!"
 end
 
 def get_info
-  info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f").split("||")
-  if info.size <= 2
-    info_hash = false
-  else
-    k = %w(station_url station artist_url artist title_url title
-           album_url album image_url remaining duration)
-    info_hash = {}
-    info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
+  info = []
+  3.times do
+    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f").split("||")
+    break unless info.size <= 2
   end
+  return false if info.size <= 2
+  
+  k = %w(station_url station artist_url artist title_url title
+         album_url album image_url remaining duration)
+  info_hash = {}
+  info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
   return info_hash
 end
 
