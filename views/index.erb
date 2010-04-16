@@ -5,17 +5,34 @@
 
   <script language=JavaScript>
      function setRefresh() {
-        timerid = window.setTimeout("doRefresh()",7000);
+        refresh_timer_id = window.setTimeout("doRefresh()",7000);
+        window.setTimeout("fakeTimerCountdown()",1000);
      }
      function clearRefresh() {
-        window.clearTimeout(timerid);
+        window.clearTimeout(refresh_timer_id);
      }
      function doRefresh() {
         document.location="/";
      }
+     
+     function pad2(number) {
+        return (number < 10 ? '0' : '') + number   
+     }
+
+     function fakeTimerCountdown() {
+        time_arr = document.getElementById("remaining").innerHTML.split(":");
+        mins = parseInt(time_arr[0]);
+        secs = parseInt(time_arr[1]);
+        secs -= 1;
+        if (secs < 0) {
+          mins -= 1;
+        }
+        document.getElementById("remaining").innerHTML = pad2(mins) + ":" + pad2(secs);
+        window.setTimeout("fakeTimerCountdown()",1000);
+     }
 
   </script>
-  <body bgcolor=#FFFFFF onload="setRefresh()" onunload="clearRefresh()">
+  <body bgcolor=#FFFFFF onload="setRefresh();" onunload="clearRefresh()">
 
     <b><a href="/">shell.fm server</a></b><small> - logged in to last.fm as: <%= Username %></small>
 
@@ -42,7 +59,7 @@
           </tr>
           <tr>
             <td><small>remaining time : </small>
-            <%= @track_info[:remaining]%> / (<%= @track_info[:duration]%>)</td>
+            <span id='remaining'><%= @track_info[:remaining]%></span> / (<%= @track_info[:duration]%>)</td>
           </tr>
           <tr>
             <td align=right><br><%= @album_image %></p></td>
