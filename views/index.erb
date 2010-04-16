@@ -5,20 +5,29 @@
 
   <script language=JavaScript>
      function setRefresh() {
-        window.setTimeout("doRefresh()",7000);
+        timerid = window.setTimeout("doRefresh()",7000);
+     }
+     function clearRefresh() {
+        window.clearTimeout(timerid);
      }
      function doRefresh() {
         document.location="/";
      }
+
   </script>
-  <body bgcolor=#FFFFFF onload="setRefresh()">
+  <body bgcolor=#FFFFFF onload="setRefresh()" onunload="clearRefresh()">
 
     <b><a href="/">shell.fm server</a></b><small> - logged in to last.fm as: <%= Username %></small>
 
     <p><small>You are connecting from: </small>
       <b><%= @client_ip %></b></p>
     
-    <hr/>
+    <% if @flash %>
+      <hr>
+      <h3><%= @flash %></h3>
+    <% end %>
+    
+    <hr>
 
     <% if @track_info %>
       <p><small>Playing: <%= @station_link %></small></p> 
@@ -36,13 +45,13 @@
             <%= @track_info[:remaining]%> / (<%= @track_info[:duration]%>)</td>
           </tr>
           <tr>
-            <td align=right><br><%= @album_image %></td>
+            <td align=right><br><%= @album_image %></p></td>
             <td><br>  
               <ul style='list-style-type: none;'>
                 <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
                   <li>
                     <a href="/?cmd=<%= cmd %>">
-                      <input type=button value='<%= CmdTitles[cmd] %>'> 
+                      <%= CmdTitles[cmd] %> 
                     </a>
                   </li>
                 <% end %>
@@ -56,10 +65,6 @@
       <p><b>Cannot connect to shell.fm</b></p> 
     <% end %>
     
-    <% if @flash %>
-      <hr>
-      <h3><%= @flash %></h3>
-    <% end %>
     <hr>
     <form name=station method=get>
       <p>Visit Station
