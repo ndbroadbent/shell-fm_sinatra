@@ -26,6 +26,7 @@
         secs -= 1;
         if (secs < 0) {
           mins -= 1;
+          secs = 59;
         }
         document.getElementById("remaining").innerHTML = pad2(mins) + ":" + pad2(secs);
         window.setTimeout("fakeTimerCountdown()",1000);
