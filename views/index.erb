@@ -16,13 +16,13 @@
      }
      
      function pad2(number) {
-        return (number < 10 ? '0' : '') + number   
+        return (number < 10 ? '0' : '') + number;
      }
 
      function fakeTimerCountdown() {
         time_arr = document.getElementById("remaining").innerHTML.split(":");
-        mins = parseInt(time_arr[0]);
-        secs = parseInt(time_arr[1]);
+        mins = parseInt(time_arr[0], 10);
+        secs = parseInt(time_arr[1], 10);
         secs -= 1;
         if (secs < 0) {
           mins -= 1;
