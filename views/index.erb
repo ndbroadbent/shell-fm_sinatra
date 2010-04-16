@@ -25,12 +25,21 @@
         secs = parseInt(time_arr[1], 10);
         secs -= 1;
         if (secs < 0) {
-          mins -= 1;
-          secs = 59;
+          if (mins == 0) {
+            mins = 0;
+            secs = 0;
+          } 
+          else
+          {
+            mins -= 1;
+            secs = 59;
+          }
         }
         document.getElementById("remaining").innerHTML = pad2(mins) + ":" + pad2(secs);
-        window.setTimeout("fakeTimerCountdown()",1000);
-     }
+        if (!(secs == 0 & mins == 0)) {
+          window.setTimeout("fakeTimerCountdown()",1000);
+        }
+      }
 
   </script>
   <body bgcolor=#FFFFFF onload="setRefresh();" onunload="clearRefresh()">
