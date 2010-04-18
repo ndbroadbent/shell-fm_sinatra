@@ -85,12 +85,12 @@ end
 
 def get_info
   info = []
-  3.times do
-    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f").split("||")
-    break unless info.size <= 2
+  2.times do
+    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f")
+    break if info
   end
-  return false if info.size <= 2
-  
+  return false unless info
+  info = info.split("||")
   k = %w(station_url station artist_url artist title_url title
          album_url album image_url remaining duration)
   info_hash = {}
