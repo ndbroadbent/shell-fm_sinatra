@@ -95,7 +95,7 @@
     <hr>
     <form name=station method=get>
       <p>Visit Station
-        <input name=stationurl size=30 value="<%= @track_info[:station_url] if @track_info %>">
+        <input name=stationurl size=30 value="<%= ('artist/' + @track_info[:artist]) if @track_info %>">
         <input type=hidden name=cmd value='play'>
         <input type=submit value='play'>
       </p>
