@@ -44,7 +44,7 @@
   </script>
   <body bgcolor=#FFFFFF onload="setRefresh();" onunload="clearRefresh()">
 
-    <b><a href="/">shell.fm server</a></b><small> - logged in to last.fm as: <%= Username %></small>
+    <b><a href="/">shell.fm server</a></b><small> - logged in to last.fm as: <%= Username %></small> - <%= link_to "/config", "view shell-fm config"%>
 
     <p><small>You are connecting from: </small>
       <b><%= @client_ip %></b></p>

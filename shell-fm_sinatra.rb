@@ -72,6 +72,12 @@ get '/' do
   erb :index  
 end
 
+get '/config' do
+  config = File.open("#{ENV["HOME"]}/.shell-fm/shell-fm.rc", "r").read
+  config.gsub!("\n", "<BR>")
+  config
+end
+
 def shellfmcmd(cmd) 
   # return `echo "#{cmd}" | nc -w 1 #{IP} #{PORT} 2>&1`
   t = TCPSocket.new(IP, PORT)
