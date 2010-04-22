@@ -1,0 +1,6 @@
+---
+interface: wlan0   # (network interface to fetch IP for.)
+port: 54311   # (Port to control shell-fm on.)
+
+# ip_override: localhost   (When using on local machine, and dont need to fetch from interface)
+
