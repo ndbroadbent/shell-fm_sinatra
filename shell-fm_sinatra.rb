@@ -36,7 +36,7 @@ Username   = sfm_config[/username ?= ?(.*)$/,1]
 get '/' do
   @client_ip = @env['REMOTE_ADDR']
   @flash = nil
- 
+
   case params[:cmd]
   when "pause", "skip", "love", "ban", "stop"
     shellfmcmd(params[:cmd])
@@ -46,20 +46,20 @@ get '/' do
     `sudo aterm -e shell-fm`
     @flash = "(Re)started shell.fm process."
   when "kill"
-    `sudo pkill shell-fm 2>/dev/null`     
+    `sudo pkill shell-fm 2>/dev/null`
     @flash = "Stopped shell.fm process."
   when "play"
     # convert "" to nil
     [:stationselect, :bookmarkselect, :stationurl].each do |k|
       params[k] = nil if params[k] == ""
     end
-    station = params[:stationselect] || 
-              params[:bookmarkselect] || 
+    station = params[:stationselect] ||
+              params[:bookmarkselect] ||
               params[:stationurl]
     shellfmcmd("play lastfm://#{station}")
     @flash = "Changed shell.fm station to: '#{station}'"
-  end   
-  
+  end
+
   if i = get_info
     i[:image_url] = nil if i[:image_url] == ""
     @station_link = link_to(i[:station_url], i[:station])
@@ -69,7 +69,7 @@ get '/' do
     @album_image  = i[:image_url] ? "<img src='#{i[:image_url]}'>" : "No Album Image."
   end
   @track_info = i
-  erb :index  
+  erb :index
 end
 
 get '/config' do
@@ -78,7 +78,7 @@ get '/config' do
   config
 end
 
-def shellfmcmd(cmd) 
+def shellfmcmd(cmd)
   # return `echo "#{cmd}" | nc -w 1 #{IP} #{PORT} 2>&1`
   t = TCPSocket.new(IP, PORT)
   t.print cmd + "\n"
@@ -92,13 +92,13 @@ end
 def get_info
   info = []
   2.times do
-    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f")
+    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f||%v")
     break if info
   end
   return false unless info
   info = info.split("||")
   k = %w(station_url station artist_url artist title_url title
-         album_url album image_url remaining duration)
+         album_url album image_url remaining duration volume)
   info_hash = {}
   info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
   return info_hash
@@ -113,7 +113,7 @@ def radio_history
     File.open("#{ENV["HOME"]}/.shell-fm/radio-history", "r").collect {|x| x.strip}.uniq
   else
     return []
-  end    
+  end
 end
 
 def bookmarks
@@ -125,3 +125,4 @@ def bookmarks
     return []
   end
 end
+
