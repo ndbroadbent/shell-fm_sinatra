@@ -92,7 +92,6 @@ end
 
 # Runs a cmd via the shellfm network interface.
 def shellfmcmd(cmd)
-  # return `echo "#{cmd}" | nc -w 1 #{IP} #{PORT} 2>&1`
   t = TCPSocket.new(IP, PORT)
   t.print cmd + "\n"
   info = t.gets(nil)
