@@ -3,16 +3,21 @@
 # by Nathan Broadbent, 2010
 # Published under the terms of the GNU General Public License (GPL).
 
-# Borrowed heavily from shell-fm.php by Matthias Goebl <matthias.goebl@goebl.net>
+# Borrowed logic from shell-fm.php by Matthias Goebl <matthias.goebl@goebl.net>
 
 require 'rubygems'
 require 'sinatra'
 require 'yaml'
 
+# Load config.
 config = YAML.load_file(File.join(File.dirname(__FILE__), "config.yml"))
 Iface     = config["interface"]
 PORT      = config["port"]
 
+# Basically, I have a few different machines that I run this on. (some thin clients with wlan)
+# So I wanted an easy way to specify which IP to bind to, and my approach
+# was to specify the network interface, and parse out the IP with 'ifconfig'.
+# IP override allows me to manually set the IP, and not use an interface.
 if config["ip_override"]
   IP = config["ip_override"] # (for testing)
 else
@@ -20,6 +25,7 @@ else
   IP = addr ? addr.strip : nil
 end
 
+# Titles for each command, to be displayed as html interface link text for each command
 CmdTitles = {"skip" => "Next",
              "love" => "Love Track",
              "ban" => "Ban Track",
@@ -28,31 +34,35 @@ CmdTitles = {"skip" => "Next",
              "start" => "Start shell-fm",
              "kill" => "Kill shell-fm process"}
 
+# Get the shellfm config and parse out the username with a Regex
 sfm_config = File.open("#{ENV["HOME"]}/.shell-fm/shell-fm.rc", "r").read
 Username   = sfm_config[/username ?= ?(.*)$/,1]
 
 # -------------------------------------
 
+# Get the index. Displays data from shell.fm and has a few commands to control the stream.
 get '/' do
-  @client_ip = @env['REMOTE_ADDR']
-  @flash = nil
+  @client_ip = @env['REMOTE_ADDR']    # Displays clients IP
+  @flash = nil  # initialize a '@flash' var to display flash messages on the generated html
 
+  # Do something depending on the command given (if any).
   case params[:cmd]
   when "pause", "skip", "love", "ban", "stop"
     shellfmcmd(params[:cmd])
     @flash = "Sent shell.fm the '#{CmdTitles[params[:cmd]]}' command."
   when "start"
     `sudo pkill shell-fm 2>/dev/null`
-    `sudo aterm -e shell-fm`
+    `sudo shell-fm`
     @flash = "(Re)started shell.fm process."
   when "kill"
     `sudo pkill shell-fm 2>/dev/null`
     @flash = "Stopped shell.fm process."
   when "play"
-    # convert "" to nil
+    # convert any "" from unused fields to nil. (because "" ~~ true in ruby.)
     [:stationselect, :bookmarkselect, :stationurl].each do |k|
       params[k] = nil if params[k] == ""
     end
+    # Set the station var to the first param with a non-null value
     station = params[:stationselect] ||
               params[:bookmarkselect] ||
               params[:stationurl]
@@ -60,6 +70,7 @@ get '/' do
     @flash = "Changed shell.fm station to: '#{station}'"
   end
 
+  # Gets track info from shell.fm network interface. If successful, continues
   if i = get_info
     i[:image_url] = nil if i[:image_url] == ""
     @station_link = link_to(i[:station_url], i[:station])
@@ -72,12 +83,14 @@ get '/' do
   erb :index
 end
 
+# Shows a page containing shell-fm.rc. (with password removed, and "<BR>" instead of "\n")
 get '/config' do
   config = File.open("#{ENV["HOME"]}/.shell-fm/shell-fm.rc", "r").read
-  config.gsub!("\n", "<BR>")
-  config
+  # Replaces password line with "{{PASSWORD HIDDEN}}"
+  config.gsub(/password *= *.*$/, "{{PASSWORD HIDDEN}}").gsub("\n", "<BR>")
 end
 
+# Runs a cmd via the shellfm network interface.
 def shellfmcmd(cmd)
   # return `echo "#{cmd}" | nc -w 1 #{IP} #{PORT} 2>&1`
   t = TCPSocket.new(IP, PORT)
@@ -89,8 +102,10 @@ def shellfmcmd(cmd)
     puts "TCP error!"
 end
 
+# Fetches shell.fm info.
 def get_info
   info = []
+  # Try to get track info 2 times. (just in case of a random TCP error on the first attempt)
   2.times do
     info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f||%v")
     break if info
@@ -104,10 +119,12 @@ def get_info
   return info_hash
 end
 
+# Rails-like link generator
 def link_to(link, text)
   "<a href='#{link}'>#{text}</a>"
 end
 
+# Returns a list of the users radio-history
 def radio_history
   if File.exist?("#{ENV["HOME"]}/.shell-fm/radio-history")
     File.open("#{ENV["HOME"]}/.shell-fm/radio-history", "r").collect {|x| x.strip}.uniq
@@ -116,6 +133,7 @@ def radio_history
   end
 end
 
+# Returns a list of the users bookmarked stations
 def bookmarks
   if File.exist?("#{ENV["HOME"]}/.shell-fm/bookmarks")
     return File.open("#{ENV["HOME"]}/.shell-fm/bookmarks", "r").collect {|h|
