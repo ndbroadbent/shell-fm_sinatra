@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>shell.fm</title>
+    <title><%= @track_info[:artist] %> - <%= @track_info[:title] %> - shell.fm</title>
   </head>
 
   <script language=JavaScript>
@@ -14,7 +14,7 @@
      function doRefresh() {
         document.location="/";
      }
-     
+
      function pad2(number) {
         return (number < 10 ? '0' : '') + number;
      }
@@ -28,7 +28,7 @@
           if (mins == 0) {
             mins = 0;
             secs = 0;
-          } 
+          }
           else
           {
             mins -= 1;
@@ -48,16 +48,16 @@
 
     <p><small>You are connecting from: </small>
       <b><%= @client_ip %></b></p>
-    
+
     <% if @flash %>
       <hr>
       <h3><%= @flash %></h3>
     <% end %>
-    
+
     <hr>
 
     <% if @track_info %>
-      <p><small>Playing: <%= @station_link %></small></p> 
+      <p><small>Playing: <%= @station_link %></small></p>
       <table>
         <tbody>
           <tr>
@@ -73,12 +73,12 @@
           </tr>
           <tr>
             <td align=right><br><%= @album_image %></p></td>
-            <td><br>  
+            <td><br>
               <ul style='list-style-type: none;'>
                 <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
                   <li>
                     <a href="/?cmd=<%= cmd %>">
-                      <%= CmdTitles[cmd] %> 
+                      <%= CmdTitles[cmd] %>
                     </a>
                   </li>
                 <% end %>
@@ -89,9 +89,9 @@
       </table>
       <br>
     <% else %>
-      <p><b>Cannot connect to shell.fm</b></p> 
+      <p><b>Cannot connect to shell.fm</b></p>
     <% end %>
-    
+
     <hr>
     <form name=station method=get>
       <p>Visit Station
@@ -99,7 +99,7 @@
         <input type=hidden name=cmd value='play'>
         <input type=submit value='play'>
       </p>
-      <p>Recent Stations 
+      <p>Recent Stations
         <select name=stationselect onchange="submit()">
           <option value=''></option>
           <% radio_history.each do |r|
@@ -122,3 +122,4 @@
     </form>
   </body>
 </html>
+
