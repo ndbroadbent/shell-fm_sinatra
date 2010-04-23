@@ -1,6 +1,12 @@
 <html>
   <head>
-    <title><%= @track_info[:artist] %> - <%= @track_info[:title] %> - shell.fm</title>
+    <title>
+      <% if @track_info %>
+        <%= @track_info[:artist] %> - <%= @track_info[:title] %> - shell.fm
+       <% else %>
+         shell.fm - stopped
+       <% end %>
+    </title>
   </head>
 
   <script language=JavaScript>
