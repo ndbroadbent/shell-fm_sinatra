@@ -4,9 +4,7 @@ function setRefresh() {
 }
 
 function ajaxRefresh(repeat) {
-    //$("#spinner").show();
     $.getJSON('info.json', function(data) {
-        //$("#spinner").hide();
         $('#station-link').html(data.station_link);
         $('#artist-link').html(data.artist_link);
         $('#title-link').html(data.title_link);
