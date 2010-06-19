@@ -4,9 +4,9 @@ function setRefresh() {
 }
 
 function ajaxRefresh(repeat) {
-    $("#spinner").show();
+    //$("#spinner").show();
     $.getJSON('info.json', function(data) {
-        $("#spinner").hide();
+        //$("#spinner").hide();
         $('#station-link').html(data.station_link);
         $('#artist-link').html(data.artist_link);
         $('#title-link').html(data.title_link);
@@ -31,10 +31,7 @@ function ajaxCommand(cmd) {
     $.get('/cmd/'+cmd,{},function(response){
         $('#'+cmd).attr('src', '/images/'+cmd+'.png'); // set icon back to normal
         setTimeout("ajaxRefresh(false);", 2000); // refresh after delay
-        // fade in the flash message, for 5 seconds
-        $('.flash').html(response);
-        $('.flash').slideDown();
-        setTimeout("$('.flash').slideUp();", 5000);
+        flash_message(response);
     })
 }
 
@@ -44,11 +41,7 @@ function ajaxPlay(station, prefix) {
     $.get('/cmd/play?station='+url,{},function(response){
         $("#playspinner").hide();
         setTimeout("ajaxRefresh(false);", 2000); // refresh after delay
-
-        // fade in the flash message, for 5 seconds
-        $('.flash').html(response);
-        $('.flash').slideDown();
-        setTimeout("$('.flash').slideUp();", 5000);
+        flash_message(response);
     })
 }
 
@@ -79,12 +72,16 @@ function volumeChange(vol) {
     $("#volspinner").show();
     $.get('/cmd/volume?vol='+vol,{},function(response){
         $("#volspinner").hide();
-
-        // fade in the flash message, for 5 seconds
-        $('.flash').html(response);
-        $('.flash').slideDown();
-        setTimeout("$('.flash').slideUp();", 5000);
+        flash_message(response);
     })
+    return false;
+}
+
+function flash_message(msg) {
+    // fade in the flash message, for 5 seconds
+    $('.flash').html(msg);
+    $('.flash').slideDown();
+    setTimeout("$('.flash').slideUp();", 5000);
     return false;
 }
 
