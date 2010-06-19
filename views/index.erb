@@ -124,7 +124,7 @@
             <p>
               <input type="radio" name="stationtype" value="artist" checked="true">Artist
               <input type="radio" name="stationtype" value="globaltags">Tags
-              <input id=stationurl size=30 value="<%= @track_info[:artist] if @track_info %>">
+              <input id=stationurl size=30>
               <script type="text/javascript">
                 $("#stationurl").keyup(function(event){
                   if(event.keyCode == 13){$("#playbutton").click();}
