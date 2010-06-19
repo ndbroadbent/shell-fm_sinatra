@@ -94,6 +94,7 @@
 
                 <div id="volumelabel">volume</div>
                 <div id="volumeslider"></div>
+                <img id="volspinner" src="/images/ui-anim_basic_16x16.gif" style="display:none;" />
                 <script type="text/javascript">
                   $(function() {
                     $("#volumeslider").slider({
@@ -101,7 +102,9 @@
                 			max: 100,
                 			value: <%= @track_info[:volume].to_i %>,
                 			change: function(event, ui) {
-                        volumeChange();
+                        if(event.originalEvent!=undefined) {
+                          volumeChange(ui.value);
+                        }
                       }
                     });
                   });

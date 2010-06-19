@@ -50,7 +50,6 @@ function ajaxPlay(station, prefix) {
         $('.flash').slideDown();
         setTimeout("$('.flash').slideUp();", 5000);
     })
-
 }
 
 function pad2(number) {
@@ -76,5 +75,16 @@ function fakeTimerCountdown() {
     window.setTimeout("fakeTimerCountdown()",1000);
 }
 
-function volumeChange() { return false;}
+function volumeChange(vol) {
+    $("#volspinner").show();
+    $.get('/cmd/volume?vol='+vol,{},function(response){
+        $("#volspinner").hide();
+
+        // fade in the flash message, for 5 seconds
+        $('.flash').html(response);
+        $('.flash').slideDown();
+        setTimeout("$('.flash').slideUp();", 5000);
+    })
+    return false;
+}
 

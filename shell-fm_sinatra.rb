@@ -97,7 +97,7 @@ get '/cmd/:cmd' do
   case params[:cmd]
   when "pause", "skip", "love", "ban", "stop"
     shellfmcmd(params[:cmd])
-    @flash = "Sent shell.fm the '#{CmdTitles[params[:cmd]]}' command."
+    @flash = "Sent command: '#{CmdTitles[params[:cmd]]}'"
   when "start"
     `sudo pkill shell-fm 2>/dev/null`
     `sudo shell-fm`
@@ -107,7 +107,10 @@ get '/cmd/:cmd' do
     @flash = "Stopped shell.fm process."
   when "play"
     shellfmcmd("play lastfm://#{params[:station]}")
-    @flash = "Changed shell.fm station to: '#{params[:station]}'"
+    @flash = "Changed station to: '#{params[:station]}'"
+  when "volume"
+    shellfmcmd("volume #{params[:vol]}")
+    @flash = "Set volume to: #{params[:vol]}%"
   end
   return @flash
 end
