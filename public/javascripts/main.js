@@ -16,13 +16,13 @@ function ajaxRefresh(repeat) {
         remain_s = data.remain_s;
         total_s = data.total_s;
         updateRemainingtime(remain_s, total_s);
-        // Reset the timer to repeat.
-        if (repeat==true) {
-            window.setTimeout("ajaxRefresh(true);",7000);
-        }
         // update browser title.
         $('title').html(data.artist + " - " + data.title + " - shell.fm");
     });
+    // Reset the timer to repeat.
+    if (repeat==true) {
+        window.setTimeout("ajaxRefresh(true);",7000);
+    }
 }
 
 function ajaxCommand(cmd) {
