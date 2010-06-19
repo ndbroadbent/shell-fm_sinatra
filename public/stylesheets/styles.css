@@ -73,11 +73,21 @@ a:hover {
     border: solid 5px #dadada;
 }
 
+#albumimage #noimage {
+    color: #eee;
+    margin-left:18px;
+    margin-top:75px;
+}
+
+#albumimage img {
+    width: 174px;
+    height: 174px;
+}
+
 .trackdetails {
     float: left;
     width: 633px;
-    height: 129px;
-    margin-top: 15px;
+    height: 159px;
 }
 
 table#details th {
@@ -100,7 +110,7 @@ table#details td {
 .buttons {
     width: 270px;
     margin-top: 10px;
-    margin-left: 200px;
+    margin-left: 190px;
 }
 
 ul.buttonlist {
@@ -134,5 +144,22 @@ ul.buttonlist li:hover {
     width: 876px;
     font-size: 12px;
     text-align: center;
+}
+
+#equalizer {
+    clear: both;
+    background-image: url("/images/t_pixel_dark.png");
+    margin-left: 190px;
+    margin-top: 4px;
+    width:226px;
+}
+
+#equalizer #image {
+    background-image: url("/images/equalizer.gif");
+    background-position: -13px -30px;
+    background-repeat: no-repeat;
+    height:26px;
+    width:226px;
+    opacity:0.6;
 }
 

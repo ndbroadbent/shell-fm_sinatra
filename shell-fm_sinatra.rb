@@ -77,7 +77,8 @@ get '/' do
     @artist_link  = link_to(i[:artist_url],  i[:artist])
     @title_link   = link_to(i[:title_url],   i[:title])
     @album_link   = link_to(i[:album_url],   i[:album])
-    @album_image  = i[:image_url] ? "<img src='#{i[:image_url]}'>" : "No Album Image."
+    @album_image  = i[:image_url] ? "<img src='#{i[:image_url]}'>" :
+                    "<div id=\"noimage\">No Album Image.</div>"
   end
   @track_info = i
   erb :index
