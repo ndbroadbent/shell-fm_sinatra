@@ -7,130 +7,115 @@
          shell.fm - stopped
        <% end %>
     </title>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styles.css" >
+
+    <script type="text/javascript" src="javascripts/jquery-1.3.2.min.js" />
+
+    <script type="text/javascript"></script>
+
   </head>
 
-  <script language=JavaScript>
-     function setRefresh() {
-        refresh_timer_id = window.setTimeout("doRefresh()",7000);
-        window.setTimeout("fakeTimerCountdown()",1000);
-     }
-     function clearRefresh() {
-        window.clearTimeout(refresh_timer_id);
-     }
-     function doRefresh() {
-        document.location="/";
-     }
+  <body>
 
-     function pad2(number) {
-        return (number < 10 ? '0' : '') + number;
-     }
+    <div id="wrapper">
+      <div id="boxwrapper">
+        <div id="controlbox">
+          <div class="left">
+            <a href="/"><img src="images/logo.png"/></a>
+          </div>
 
-     function fakeTimerCountdown() {
-        time_arr = document.getElementById("remaining").innerHTML.split(":");
-        mins = parseInt(time_arr[0], 10);
-        secs = parseInt(time_arr[1], 10);
-        secs -= 1;
-        if (secs < 0) {
-          if (mins == 0) {
-            mins = 0;
-            secs = 0;
-          }
-          else
-          {
-            mins -= 1;
-            secs = 59;
-          }
-        }
-        document.getElementById("remaining").innerHTML = pad2(mins) + ":" + pad2(secs);
-        if (!(secs == 0 & mins == 0)) {
-          window.setTimeout("fakeTimerCountdown()",1000);
-        }
-      }
+          <div class="light right loggedin">
+            Logged in to last.fm as: <b><%= Username %></b> <br/>
+            You are connecting from: <b><%= @client_ip %></b><br/>
+            <%= link_to "/config", "- view shell-fm config -"%>
+          </div>
 
-  </script>
-  <body bgcolor=#FFFFFF onload="setRefresh();" onunload="clearRefresh()">
+          <div class="trackinfo">
+            <div id="albumimage"><%= @album_image %></div>
+            <div class="light trackdetails">
+              <% if @track_info %>
+                <table id="details">
+                  <tbody>
+                    <tr>
+                      <th>last.fm station : </th>
+                      <td><%= @station_link %></td>
+                    </tr>
+                    <tr>
+                      <th>track : </th>
+                      <td><%= @artist_link %> - <%= @title_link %></td>
+                    <tr>
+                      <th>album : </th>
+                      <td><%= @album_link %></td>
+                    </tr>
+                    <tr>
+                      <th>remaining time : </th>
+                      <td><span id='remaining'><%= @track_info[:remaining]%></span> / (<%= @track_info[:duration]%>)</td>
+                    </tr>
+                    <tr>
+                      <th>volume : </th>
+                      <td><%= @track_info[:volume]%></td>
+                    </tr>
+                  </tbody>
+                </table>
 
-    <b><a href="/">shell.fm server</a></b><small> - logged in to last.fm as: <%= Username %></small> - <%= link_to "/config", "view shell-fm config"%>
-    <p><img src='/images/lastfm.png'></p>
+                <div class="buttons">
+                  <ul class="buttonlist">
+                    <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
+                      <li>
+                        <a href="/?cmd=<%= cmd %>">
+                          <img src="images/<%= cmd %>.png"/>
+                        </a>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% else %>
+                <p><b>shell.fm not accessible</b></p>
+              <% end %>
+            </div>
+          </div>
 
-    <p><small>You are connecting from: </small>
-      <b><%= @client_ip %></b></p>
+          <div class="light changestation">
+            <form name=station method=get>
+              <p>
+                <input name=stationurl size=30 value="<%= ('artist/' + @track_info[:artist]) if @track_info %>">
+                <input type=hidden name=cmd value='play'>
+                <input type=submit value='play'>
+              </p>
+              <p>Recent Stations
+                <select name=stationselect onchange="submit()">
+                  <option value=''></option>
+                  <% radio_history.each do |r|
+                    unless r == "" %>
+                      <option value='<%= r %>'><%= r %></option>
+                    <% end %>
+                  <% end %>
+                </select>
+              Bookmarked Stations
+                <select name=bookmarkselect onchange="submit()">
+                  <option value=''></option>
+                  <% bookmarks.each do |k, v|
+                    unless v == "" %>
+                      <option value='<%= v %>'><%= "#{k}: #{v}" %></option>
+                    <% end %>
+                  <% end %>
+                </select>
+              </p>
+            </form>
+          </div>
 
-    <% if @flash %>
-      <hr>
-      <h3><%= @flash %></h3>
-    <% end %>
-
-    <hr>
-
-    <% if @track_info %>
-      <p><small>Playing: <%= @station_link %></small></p>
-      <table>
-        <tbody>
-          <tr>
-            <td><small>track : </small>
-            <%= @artist_link %> - <%= @title_link %></td>
-          <tr>
-            <td><small>album : </small>
-            <%= @album_link %> </td>
-          </tr>
-          <tr>
-            <td><small>remaining time : </small>
-            <span id='remaining'><%= @track_info[:remaining]%></span> / (<%= @track_info[:duration]%>)</td>
-          </tr>
-          <tr>
-            <td><small>volume : </small>
-            <%= @track_info[:volume]%></td>
-          </tr>
-          <tr>
-            <td align=right><br><%= @album_image %></p></td>
-            <td><br>
-              <ul style='list-style-type: none;'>
-                <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
-                  <li>
-                    <a href="/?cmd=<%= cmd %>">
-                      <%= CmdTitles[cmd] %>
-                    </a>
-                  </li>
-                <% end %>
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <br>
-    <% else %>
-      <p><b>Cannot connect to shell.fm</b></p>
-    <% end %>
-
-    <hr>
-    <form name=station method=get>
-      <p>Visit Station
-        <input name=stationurl size=30 value="<%= ('artist/' + @track_info[:artist]) if @track_info %>">
-        <input type=hidden name=cmd value='play'>
-        <input type=submit value='play'>
-      </p>
-      <p>Recent Stations
-        <select name=stationselect onchange="submit()">
-          <option value=''></option>
-          <% radio_history.each do |r|
-            unless r == "" %>
-              <option value='<%= r %>'><%= r %></option>
-            <% end %>
+          <% if @flash %>
+            <div class="light flash"><%= @flash %></div>
           <% end %>
-        </select>
-      </p>
-      <p>Bookmarked Stations
-        <select name=bookmarkselect onchange="submit()">
-          <option value=''></option>
-          <% bookmarks.each do |k, v|
-            unless v == "" %>
-              <option value='<%= v %>'><%= "#{k}: #{v}" %></option>
-            <% end %>
-          <% end %>
-        </select>
-      </p>
-    </form>
+
+        </div>
+        <div id="icons"><%= link_to "http://p.yusukekamiyamane.com/", "icons by pinvoke"%></div>
+      </div>
+    </div>
+
+
+
   </body>
 </html>
 

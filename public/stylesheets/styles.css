@@ -1,0 +1,138 @@
+body {
+    background-image: url("/images/background.png");
+    font-family:sans-serif;
+
+}
+
+#wrapper {
+	position: relative;
+	text-align: left;
+    top: 0;
+	width: 900px;
+	height: 450px;
+	margin: 0px auto;
+}
+
+#boxwrapper {
+	background-color: #afafaf;
+	border: solid 7px #e0e0e0;
+	position: absolute;
+	top: 5%;
+	left: 0px;
+	width: 900px;
+	height: 450px;
+	min-width: 900px;
+	padding: 15px;
+}
+
+#controlbox {
+    background-image: url("/images/box_background.png");
+    width: 900px;
+	height: 450px;
+}
+
+a img {
+    border: none;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    color: #4AFF07;
+}
+
+
+.left { float: left; }
+.right { float: right; }
+
+.light {
+    background-image: url("/images/t_pixel.png");
+    padding: 12px;
+    color: #333;
+}
+
+.loggedin {
+    float: right;
+    font-size: 11px;
+    text-align: center;
+}
+
+.trackinfo {
+    clear: both;
+    padding: 15px 25px;
+}
+
+#albumimage {
+    float: left;
+    width: 174px;
+    height: 174px;
+    background-color: #888;
+    border: solid 5px #dadada;
+}
+
+.trackdetails {
+    float: left;
+    width: 633px;
+    height: 129px;
+    margin-top: 15px;
+}
+
+table#details th {
+    font-size: 12px;
+    text-align: right;
+}
+table#details td {
+    font-size: 13px;
+    text-align: left;
+}
+
+#icons a {
+    font-size: 10px;
+    color: #eee;
+}
+#icons a:hover {
+    color: #222;
+}
+
+.buttons {
+    width: 270px;
+    margin-top: 10px;
+    margin-left: 200px;
+}
+
+ul.buttonlist {
+    list-style-type: none;
+    padding-left: 0px;
+    margin: 0;
+}
+ul.buttonlist li {
+    background-image: url("/images/t_pixel_dark.png");
+    display: inline;
+    padding: 8px 4px 4px 8px;
+    text-align:center;
+}
+
+ul.buttonlist li:hover {
+    background-image: url("/images/t_pixel_hover.png");
+}
+
+.flash {
+    width: 876px;
+    bottom: 15px;
+    position: absolute;
+    text-align: center;
+    color: #474747;
+}
+
+.changestation {
+    float: left;
+    clear: both;
+    margin-top: 15px;
+    width: 876px;
+    font-size: 12px;
+    text-align: center;
+}
+
