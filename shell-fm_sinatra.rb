@@ -80,6 +80,8 @@ get '/' do
     @album_image  = i[:image_url] ? "<img src='#{i[:image_url]}'>" :
                     "<div id=\"noimage\">No Album Image.</div>"
   end
+
+  puts @title_link
   @track_info = i
   erb :index
 end
