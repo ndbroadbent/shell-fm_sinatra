@@ -9,21 +9,25 @@
        <% end %>
     </title>
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/styles.css" >
+    <link rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui-1.8.2.custom.css" >
+    <link rel="stylesheet" type="text/css" href="/stylesheets/styles.css" >
 
-    <script type="text/javascript" src="javascripts/jquery-1.3.2.min.js" />
-
-    <script type="text/javascript"></script>
-
+    <script type="text/javascript" src="javascripts/jquery-1.4.2.min.js" ></script>
+    <script type="text/javascript" src="javascripts/jquery-ui-1.8.2.custom.min.js" ></script>
+    <script type="text/javascript" src="javascripts/main.js" ></script>
   </head>
 
-  <body>
+  <body onload="setRefresh();">
 
     <div id="wrapper">
       <div id="boxwrapper">
         <div id="controlbox">
-          <div class="left">
+          <div class="left logo">
             <a href="/"><img src="images/logo.png"/></a>
+          </div>
+
+          <div id="spinner" style="display:none;">
+            <img src="/images/ui-anim_basic_16x16.gif" />
           </div>
 
           <div class="light right loggedin">
@@ -32,40 +36,52 @@
             <%= link_to "/config", "- view shell-fm config -"%>
           </div>
 
-          <div class="trackinfo">
-            <div id="albumimage"><%= @album_image %></div>
+          <div class="dark station" id="station-link">
+             <%= @station_link %>
+          </div>
+
+          <div class="track-info">
+            <div id="album-image"><%= @album_image %></div>
             <div class="light trackdetails">
               <% if @track_info %>
                 <table id="details">
                   <tbody>
                     <tr>
-                      <th>last.fm station : </th>
-                      <td><%= @station_link %></td>
-                    </tr>
-                    <tr>
                       <th>track : </th>
-                      <td><%= @artist_link %> - <%= @title_link %></td>
+                      <td>
+                        <span id="artist-link"><%= @artist_link %></span> -
+                        <span id="title-link"><%= @title_link %></span>
+                      </td>
                     <tr>
                       <th>album : </th>
-                      <td><%= @album_link %></td>
-                    </tr>
-                    <tr>
-                      <th>remaining time : </th>
-                      <td><span id='remaining'><%= @track_info[:remaining]%></span> / (<%= @track_info[:duration]%>)</td>
-                    </tr>
-                    <tr>
-                      <th>volume : </th>
-                      <td><%= @track_info[:volume]%></td>
+                      <td><span id="album-link"><%= @album_link %></span></td>
                     </tr>
                   </tbody>
                 </table>
+
+                <div id='remaining'>
+                  <div id="progresstime"></div>
+                  <p>
+                    <span id="remainlabel"><%= @track_info[:remaining] %></span> /
+                    <span id="totallabel"><%= @track_info[:duration]%></span>
+                  </p>
+                </div>
+                <script type="text/javascript">
+	                $(function() {
+		                $("#progresstime").progressbar({
+			                value: <%= (((@track_info[:total_s].to_f - @track_info[:remain_s].to_f) / @track_info[:total_s].to_f) * 100).to_i %>
+		                });
+	                });
+	                var remain_s = <%= @track_info[:remain_s] %>;
+	                var total_s = <%= @track_info[:total_s] %>;
+                </script>
 
                 <div class="buttons">
                   <ul class="buttonlist">
                     <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
                       <li>
-                        <a href="/?cmd=<%= cmd %>">
-                          <img src="images/<%= cmd %>.png"/>
+                        <a href="#" onclick="ajaxCommand('<%= cmd %>')">
+                          <img id="<%= cmd %>" src="images/<%= cmd %>.png"/>
                         </a>
                       </li>
                     <% end %>
@@ -76,6 +92,21 @@
                   <div id="image"></div>
                 </div>
 
+                <div id="volumelabel">volume</div>
+                <div id="volumeslider"></div>
+                <script type="text/javascript">
+                  $(function() {
+                    $("#volumeslider").slider({
+                 			min: 0,
+                			max: 100,
+                			value: <%= @track_info[:volume].to_i %>,
+                			change: function(event, ui) {
+                        volumeChange();
+                      }
+                    });
+                  });
+                </script>
+
               <% else %>
                 <p><b>shell.fm not accessible</b></p>
               <% end %>
@@ -83,37 +114,43 @@
           </div>
 
           <div class="light changestation">
-            <form name=station method=get>
-              <p>
-                <input name=stationurl size=30 value="<%= ('artist/' + @track_info[:artist]) if @track_info %>">
-                <input type=hidden name=cmd value='play'>
-                <input type=submit value='play'>
-              </p>
-              <p>Recent Stations
-                <select name=stationselect onchange="submit()">
-                  <option value=''></option>
-                  <% radio_history.each do |r|
-                    unless r == "" %>
-                      <option value='<%= r %>'><%= r %></option>
-                    <% end %>
+            <p>
+              <input type="radio" name="stationtype" value="artist" checked="true">Artist
+              <input type="radio" name="stationtype" value="globaltags">Tags
+              <input id=stationurl size=30 value="<%= @track_info[:artist] if @track_info %>">
+              <script type="text/javascript">
+                $("#stationurl").keyup(function(event){
+                  if(event.keyCode == 13){$("#playbutton").click();}
+                });
+              </script>
+              <input id="playbutton" type=button value="play" onclick="ajaxPlay($('#stationurl').val(), $('input[@name=stationtype]:checked').val()+'/');">
+
+              <input type=button value="play current artist" onclick="ajaxPlay('artist/'+$('#artist-link a').html(), '');">
+
+              <img id="playspinner" src="/images/ui-anim_basic_16x16.gif" style="display:none;" />
+            </p>
+            <p>Recent Stations
+              <select id=stationselect onchange="ajaxPlay($('#stationselect').val(), '');">
+                <option value=''></option>
+                <% radio_history.each do |r|
+                  unless r == "" %>
+                    <option value='<%= r %>'><%= r %></option>
                   <% end %>
-                </select>
-              Bookmarked Stations
-                <select name=bookmarkselect onchange="submit()">
-                  <option value=''></option>
-                  <% bookmarks.each do |k, v|
-                    unless v == "" %>
-                      <option value='<%= v %>'><%= "#{k}: #{v}" %></option>
-                    <% end %>
+                <% end %>
+              </select>
+            Bookmarked Stations
+              <select id=bookmarkselect onchange="ajaxPlay($('#bookmarkselect').val(), '');">
+                <option value=''></option>
+                <% bookmarks.each do |k, v|
+                  unless v == "" %>
+                    <option value='<%= v %>'><%= "#{k}: #{v}" %></option>
                   <% end %>
-                </select>
-              </p>
-            </form>
+                <% end %>
+              </select>
+            </p>
           </div>
 
-          <% if @flash %>
-            <div class="light flash"><%= @flash %></div>
-          <% end %>
+          <div class="light flash" style="display:none;"></div>
 
         </div>
         <div id="icons"><%= link_to "http://p.yusukekamiyamane.com/", "icons by pinvoke"%></div>

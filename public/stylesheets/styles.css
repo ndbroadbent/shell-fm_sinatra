@@ -54,18 +54,45 @@ a:hover {
     color: #333;
 }
 
+.dark {
+    background-image: url("/images/t_pixel_vdark.png");
+    padding: 12px;
+    color: #333;
+}
+
+.logo {
+    margin-left:25px;
+    margin-top:10px;
+}
+
+#spinner {
+    float: left;
+    margin-left:3px;
+    margin-top:30px;
+}
+
+.station {
+    float: right;
+}
+
+.station a {
+    color: #eee;
+    font-weight: bold;
+    font-size: 13px;
+}
+
 .loggedin {
     float: right;
     font-size: 11px;
     text-align: center;
 }
 
-.trackinfo {
+.track-info {
     clear: both;
     padding: 15px 25px;
 }
 
-#albumimage {
+#album-image {
     float: left;
     width: 174px;
     height: 174px;
@@ -73,13 +100,13 @@ a:hover {
     border: solid 5px #dadada;
 }
 
-#albumimage #noimage {
+#album-image #noimage {
     color: #eee;
     margin-left:18px;
     margin-top:75px;
 }
 
-#albumimage img {
+#album-image img {
     width: 174px;
     height: 174px;
 }
@@ -99,6 +126,21 @@ table#details td {
     text-align: left;
 }
 
+#volumelabel {
+    float:left;
+    clear: both;
+    font-size: 11px;
+    margin-top:14px;
+    margin-left: 5px;
+}
+
+#volumeslider {
+    float:left;
+    margin-top:13px;
+    width:200px;
+    margin-left:13px;
+}
+
 #icons a {
     font-size: 10px;
     color: #eee;
@@ -108,9 +150,9 @@ table#details td {
 }
 
 .buttons {
-    width: 270px;
-    margin-top: 10px;
-    margin-left: 190px;
+    clear: both;
+    float: left;
+    margin-top: 15px;
 }
 
 ul.buttonlist {
@@ -147,10 +189,9 @@ ul.buttonlist li:hover {
 }
 
 #equalizer {
-    clear: both;
+    float: left;
     background-image: url("/images/t_pixel_dark.png");
-    margin-left: 190px;
-    margin-top: 4px;
+    margin-top: 8px;
     width:226px;
 }
 
@@ -158,8 +199,21 @@ ul.buttonlist li:hover {
     background-image: url("/images/equalizer.gif");
     background-position: -13px -30px;
     background-repeat: no-repeat;
-    height:26px;
+    height:31px;
     width:226px;
     opacity:0.6;
+}
+
+.ui-progressbar-value { background-image: url(/images/pbar-ani-green.gif); }
+#progresstime {
+    height: 20px;
+    width: 400px;
+    margin-top: 5px;
+}
+
+#remaining p {
+    display: inline;
+    font-size: 12px;
+    margin-left: 5px;
 }
 
