@@ -148,6 +148,8 @@ def get_info
          album_url album image_url remaining duration volume remain_s total_s)
   info_hash = {}
   info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
+  # Don't let remaining seconds be a negative value.
+  info_hash[:remain_s] = 0 if info_hash[:remain_s].to_i < 0
   return info_hash
 end
 
