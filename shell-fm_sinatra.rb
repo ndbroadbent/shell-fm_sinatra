@@ -72,7 +72,8 @@ get '/info.json' do
     @title_link   = link_to(i[:title_url],   i[:title])
     @album_link   = link_to(i[:album_url],   i[:album])
     @album_image  = i[:image_url] ? "<img src='#{i[:image_url]}'>" :
-                    "<div id=\"noimage\">No Album Image.</div>"
+                    "<div id=\\\"noimage\\\">No Album Image.</div>"
+                    # Double \\\ escaping for json parsing.
   return %Q{
     {
     "artist": "#{i[:artist]}",
