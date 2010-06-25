@@ -14,6 +14,9 @@ config = YAML.load_file(File.join(File.dirname(__FILE__), "config.yml"))
 Iface     = config["interface"]
 PORT      = config["port"]
 
+# for the correct handling of different statuses.
+$status = "playing"
+
 # Basically, I have a few different machines that I run this on. (some thin clients with wlan)
 # So I wanted an easy way to specify which IP to bind to, and my approach
 # was to specify the network interface, and parse out the IP with 'ifconfig'.
@@ -56,8 +59,8 @@ get '/' do
                     "<div id=\"noimage\">No Album Image.</div>"
   end
 
-  puts @title_link
   @track_info = i
+  @status = $status
 
   return params[:format] if params[:format]
   erb :index
@@ -83,9 +86,10 @@ get '/info.json' do
     "title_link": "#{@title_link}",
     "album_link": "#{@album_link}",
     "album_image": "#{@album_image}",
-    "remain_s": #{i[:remain_s]},
-    "total_s": #{i[:total_s]},
-    "volume": #{i[:volume].to_i}
+    "remain_s": #{i[:remain_s].to_i},
+    "total_s": #{i[:total_s].to_i},
+    "volume": #{i[:volume].to_i},
+    "status": "#{$status}"
     }
   }
   else
@@ -113,6 +117,9 @@ get '/cmd/:cmd' do
     shellfmcmd("volume #{params[:vol]}")
     @flash = "Set volume to: #{params[:vol]}%"
   end
+
+  toggle_pause_status if params[:cmd] == "pause"
+
   return @flash
 end
 
@@ -149,14 +156,33 @@ def get_info
          album_url album image_url remaining duration volume remain_s total_s)
   info_hash = {}
   info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
-  # Don't let remaining seconds be a negative value.
-  info_hash[:remain_s] = 0 if info_hash[:remain_s].to_i < 0
+  info_hash[:remain_s] = info_hash[:remain_s].to_i
+  info_hash[:total_s] = info_hash[:total_s].to_i
+    # Don't let remaining seconds be a negative value.
+  info_hash[:remain_s] = 0 if info_hash[:remain_s] < 0
+
+  if info_hash[:total_s] > 0
+    # Change the status to playing if it is currently stopped.
+    # (not if it is currently paused, obviously)
+    $status = "playing" if $status == "stopped"
+  else
+    $status = "stopped"
+  end
+
   return info_hash
 end
 
 # Rails-like link generator
 def link_to(link, text)
   "<a href='#{link}'>#{text}</a>"
+end
+
+def toggle_pause_status
+  if $status == "playing"
+    $status = "paused"
+  else
+    $status = "playing"
+  end
 end
 
 # Returns a list of the users radio-history

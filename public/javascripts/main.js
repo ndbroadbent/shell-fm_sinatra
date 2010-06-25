@@ -1,6 +1,7 @@
 function setRefresh() {
     window.setTimeout("ajaxRefresh(true);",7000);
     window.setTimeout("fakeTimerCountdown();",1000);
+    updateStatus();
 }
 
 function ajaxRefresh(repeat) {
@@ -14,6 +15,10 @@ function ajaxRefresh(repeat) {
         remain_s = data.remain_s;
         total_s = data.total_s;
         updateRemainingtime(remain_s, total_s);
+
+        status = data.status;
+        updateStatus();
+
         // update browser title.
         $('title').html(data.artist + " - " + data.title + " - shell.fm");
     });
@@ -57,8 +62,18 @@ function updateRemainingtime(s, t) {
     document.getElementById("totallabel").innerHTML = pad2(tMins) + ":" + pad2(tSecs);
 }
 
+function updateStatus() {
+    if (status == "paused" || status == "stopped") {
+        $("#message-shadow #message").html(status);
+        $("#message-shadow").show();
+    } else {
+        $("#message-shadow").hide();
+    }
+}
+
+
 function fakeTimerCountdown() {
-    if (remain_s > 0) {
+    if (remain_s > 0 && status == "playing") {
         remain_s -= 1;
         updateRemainingtime(remain_s, total_s);
     }

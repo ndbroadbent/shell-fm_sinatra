@@ -69,11 +69,13 @@
                 <script type="text/javascript">
 	                $(function() {
 		                $("#progresstime").progressbar({
-			                value: <%= (((@track_info[:total_s].to_f - @track_info[:remain_s].to_f) / @track_info[:total_s].to_f) * 100).to_i %>
+			                value: <%= @track_info[:total_s].to_i > 0 ? (((@track_info[:total_s].to_f - @track_info[:remain_s].to_f) / @track_info[:total_s].to_f) * 100).to_i : 0 %>
 		                });
 	                });
 	                var remain_s = <%= @track_info[:remain_s] %>;
 	                var total_s = <%= @track_info[:total_s] %>;
+
+	                var status = "<%= @status %>";
                 </script>
 
                 <div class="buttons">
@@ -117,6 +119,11 @@
               <% else %>
                 <p><b>shell.fm not running. <%= link_to "/cmd/start", "Start shell.fm" %></b></p>
               <% end %>
+
+              <div id="message-shadow" class="dark" style="display:none">
+                  <div id="message"></div>
+              </div>
+
             </div>
           </div>
 

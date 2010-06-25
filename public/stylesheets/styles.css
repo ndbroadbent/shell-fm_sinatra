@@ -237,3 +237,24 @@ ul.buttonlist li:hover {
     margin-left: 5px;
 }
 
+
+#message-shadow {
+    position: absolute;
+    top: -96px;
+    height: 159px;
+    width: 100%;
+}
+
+#message-shadow {
+    position:absolute;
+    top:96px;
+    height:78px;
+    width:621px;
+}
+#message-shadow #message {
+    color: #FFFFFF;
+    font-size: 30px;
+    text-align: center;
+    padding-top: 19px;
+}
+
