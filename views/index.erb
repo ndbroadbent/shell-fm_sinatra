@@ -80,7 +80,7 @@
 
                 <div class="buttons">
                   <ul class="buttonlist">
-                    <% ["skip","love","ban","pause","stop","start","kill"].each do |cmd| %>
+                    <% ["skip","love","ban","pause","stop"].each do |cmd| %>
                       <li>
                         <a href="#" onclick="ajaxCommand('<%= cmd %>')">
                           <img id="<%= cmd %>" src="images/<%= cmd %>.png"/>

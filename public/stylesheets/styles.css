@@ -113,8 +113,9 @@ a:hover {
 
 .trackdetails {
     float: left;
-    width: 633px;
+    width: 645px;
     height: 159px;
+    padding-right: 0;
 }
 
 table#details th {
@@ -212,6 +213,7 @@ ul.buttonlist li:hover {
     float: left;
     background-image: url("/images/t_pixel_dark.png");
     margin-top: 8px;
+    margin-left:30px;
     width:226px;
 }
 
