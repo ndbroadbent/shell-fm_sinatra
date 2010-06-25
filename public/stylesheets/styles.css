@@ -162,7 +162,7 @@ table#details td {
     margin-left: 14px;
 }
 
-#icons a {
+#icons, #icons a {
     font-size: 10px;
     color: #eee;
 }

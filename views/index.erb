@@ -117,7 +117,8 @@
                 </script>
 
               <% else %>
-                <p><b>shell.fm not running. <%= link_to "/cmd/start", "Start shell.fm" %></b></p>
+                <p><b>shell.fm not running.</b></p>
+                <p>[<%= link_to "/cmd/start", "Start shell.fm" %>]</p>
               <% end %>
 
               <div id="message-shadow" class="dark" style="display:none">
@@ -167,7 +168,9 @@
           <div class="light flash" style="display:none;"></div>
 
         </div>
-        <div id="icons"><%= link_to "http://p.yusukekamiyamane.com/", "icons by pinvoke"%></div>
+        <div id="icons">
+          <%= link_to "http://p.yusukekamiyamane.com/", "icons by pinvoke"%>  |  <%= link_to "http://nathanf77.wordpress.com", "shell.fm sinatra server by Nathan Broadbent"%>
+        </div>
       </div>
     </div>
 
