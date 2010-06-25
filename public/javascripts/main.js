@@ -35,6 +35,18 @@ function ajaxCommand(cmd) {
         $('#'+cmd).attr('src', '/images/'+cmd+'.png'); // set icon back to normal
         setTimeout("ajaxRefresh(false);", 2000); // refresh after delay
         flash_message(response);
+        // Do a quick initial toggle of pause/play/stop shadow box if applicable.
+        if (cmd == "pause") {
+            if (status == "playing") {
+                status = "paused";
+            } else if (status == "paused") {
+                status = "playing";
+            }
+            updateStatus();
+        } else if (cmd == "stop") {
+            status = "stopped";
+            updateStatus();
+        }
     })
 }
 
@@ -64,10 +76,16 @@ function updateRemainingtime(s, t) {
 
 function updateStatus() {
     if (status == "paused" || status == "stopped") {
+        // show the shadowbox overlay with the status message
         $("#message-shadow #message").html(status);
         $("#message-shadow").show();
-    } else {
+        // set equalizer image to static gif
+        $("#equalizer #image").css("background-image", "url(/images/equalizer_paused.gif)");
+    } else {  // else, if the track status is 'playing'
+        // hide shadowbox overlay
         $("#message-shadow").hide();
+        // set equalizer image to animated gif
+        $("#equalizer #image").css("background-image", "url(/images/equalizer.gif)");
     }
 }
 
