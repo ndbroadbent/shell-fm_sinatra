@@ -133,23 +133,34 @@ get '/config' do
   config.gsub(/password *= *.*$/, "{{PASSWORD HIDDEN}}").gsub("\n", "<BR>")
 end
 
-# for lcd4linux to retrieve
+# for lcd4linux to retrieve display info.
 get '/lcd_text/:key' do
-  case params[:key]
-  when "artist"
-    # update cached values only on an 'artist' call.
-    if i = get_info
-      $cached_title = i[:title]
-      $cached_album = i[:album]
-      $cached_duration = i[:duration]
-      return i[:artist]
+  case $status
+  when "stopped"
+    case params[:key]
+    when "artist"
+      return "[STOPPED]"
+    else
+      return "-"
     end
-  when "title"
-    return $cached_title
-  when "album"
-    return $cached_album
-  when "duration"
-    return $cached_duration
+  else
+    case params[:key]
+    when "artist"
+      # update cached values only on an 'artist' call.
+      if i = get_info
+        $cached_title = i[:title]
+        $cached_album = i[:album]
+        $cached_duration = i[:duration]
+        return i[:artist]
+      end
+    when "title"
+      return $cached_title
+    when "album"
+      return $cached_album
+    when "duration"
+      return "[PAUSED]" if $status == "paused"
+      return $cached_duration
+    end
   end
 end
 
