@@ -16,6 +16,8 @@ PORT      = config["port"]
 
 # for the correct handling of different statuses.
 $status = "playing"
+# for detecting pause/play
+$last_remain = 0
 
 # Basically, I have a few different machines that I run this on. (some thin clients with wlan)
 # So I wanted an easy way to specify which IP to bind to, and my approach
@@ -158,16 +160,26 @@ def get_info
   info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
   info_hash[:remain_s] = info_hash[:remain_s].to_i
   info_hash[:total_s] = info_hash[:total_s].to_i
-    # Don't let remaining seconds be a negative value.
-  info_hash[:remain_s] = 0 if info_hash[:remain_s] < 0
 
   if info_hash[:total_s] > 0
     # Change the status to playing if it is currently stopped.
     # (not if it is currently paused, obviously)
     $status = "playing" if $status == "stopped"
+
+    if $last_remain == info_hash[:remain_s]
+      $status = "paused"
+    else
+      $status = "playing"
+    end
+
   else
     $status = "stopped"
   end
+
+  $last_remain = info_hash[:remain_s]
+
+  # Don't let remaining seconds be a negative value. (After pause detection logic..)
+  info_hash[:remain_s] = 0 if info_hash[:remain_s] < 0
 
   return info_hash
 end
