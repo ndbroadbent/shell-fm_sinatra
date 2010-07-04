@@ -133,6 +133,27 @@ get '/config' do
   config.gsub(/password *= *.*$/, "{{PASSWORD HIDDEN}}").gsub("\n", "<BR>")
 end
 
+# for lcd4linux to retrieve
+get '/lcd_text/:key' do
+  case params[:key]
+  when "artist"
+    # update cached values only on an 'artist' call.
+    if i = get_info
+      $cached_title = i[:title]
+      $cached_album = i[:album]
+      $cached_duration = i[:duration]
+      return i[:artist]
+    end
+  when "title"
+    return $cached_title
+  when "album"
+    return $cached_album
+  when "duration"
+    return $cached_duration
+  end
+end
+
+
 # Runs a cmd via the shellfm network interface.
 def shellfmcmd(cmd)
   t = TCPSocket.new(IP, PORT)
