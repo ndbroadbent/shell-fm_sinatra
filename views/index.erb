@@ -9,12 +9,12 @@
        <% end %>
     </title>
 
-    <link rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui-1.8.2.custom.css" >
-    <link rel="stylesheet" type="text/css" href="/stylesheets/styles.css" >
+    <link rel="stylesheet" type="text/css" href="http://shell-fm-sinatra.heroku.com/stylesheets/jquery-ui-1.8.2.custom.css" >
+    <link rel="stylesheet" type="text/css" href="http://shell-fm-sinatra.heroku.com/stylesheets/styles.css" >
 
-    <script type="text/javascript" src="javascripts/jquery-1.4.2.min.js" ></script>
-    <script type="text/javascript" src="javascripts/jquery-ui-1.8.2.custom.min.js" ></script>
-    <script type="text/javascript" src="javascripts/main.js" ></script>
+    <script type="text/javascript" src="http://shell-fm-sinatra.heroku.com/javascripts/jquery-1.4.2.min.js" ></script>
+    <script type="text/javascript" src="http://shell-fm-sinatra.heroku.com/javascripts/jquery-ui-1.8.2.custom.min.js" ></script>
+    <script type="text/javascript" src="http://shell-fm-sinatra.heroku.com/javascripts/main.js" ></script>
   </head>
 
   <body onload="setRefresh();">
@@ -23,17 +23,18 @@
       <div id="boxwrapper">
         <div id="controlbox">
           <div class="left logo">
-            <a href="/"><img src="images/logo.png"/></a>
+            <a href="/"><img src="http://shell-fm-sinatra.heroku.com/images/logo.png"/></a>
           </div>
 
           <div id="spinner" style="display:none;">
-            <img src="/images/ui-anim_basic_16x16.gif" />
+            <img src="http://shell-fm-sinatra.heroku.com/images/ui-anim_basic_16x16.gif" />
           </div>
 
           <div class="light right loggedin">
             Using last.fm account: <b><%= Username %></b> <br/>
             You are connecting from: <b><%= @client_ip %></b><br/>
-            <%= link_to "/config", "- view shell-fm config -"%>
+            <%= link_to "/config", "- view shell-fm config -"%><br/>
+            The time is: <%= hk_time.strftime("%Y-%m-%d %H:%M:%S") %>
           </div>
 
           <div class="dark station" id="station-link">
@@ -83,7 +84,7 @@
                     <% ["skip","love","ban","pause","stop"].each do |cmd| %>
                       <li>
                         <a href="#" onclick="ajaxCommand('<%= cmd %>')">
-                          <img id="<%= cmd %>" src="images/<%= cmd %>.png"/>
+                          <img id="<%= cmd %>" src="http://shell-fm-sinatra.heroku.com/images/<%= cmd %>.png"/>
                         </a>
                       </li>
                     <% end %>
@@ -98,7 +99,7 @@
                 <div id="volumeslider"></div>
 
                 <div id="volspinner" style="display:none;" >
-                  <img src="/images/ui-anim_basic_16x16.gif" />
+                  <img src="http://shell-fm-sinatra.heroku.com/images/ui-anim_basic_16x16.gif" />
                 </div>
 
                 <script type="text/javascript">
@@ -142,7 +143,7 @@
 
               <input type=button value="play current artist" onclick="ajaxPlay('artist/'+$('#artist-link a').html(), '');">
 
-              <img id="playspinner" src="/images/ui-anim_basic_16x16.gif" style="display:none;" />
+              <img id="playspinner" src="http://shell-fm-sinatra.heroku.com/images/ui-anim_basic_16x16.gif" style="display:none;" />
             </p>
             <p>Recent Stations
               <select id=stationselect onchange="ajaxPlay($('#stationselect').val(), '');">
@@ -169,7 +170,7 @@
 
         </div>
         <div id="icons">
-          <%= link_to "http://p.yusukekamiyamane.com/", "icons by pinvoke"%>  |  <%= link_to "http://nathanf77.wordpress.com", "shell.fm sinatra server by Nathan Broadbent"%>
+          <%= link_to "http://p.yusukekamiyamane.com/", "icons by pinvoke"%>  |  <%= link_to "http://www.f-77.com", "shell.fm sinatra server by Nathan Broadbent"%>
         </div>
       </div>
     </div>

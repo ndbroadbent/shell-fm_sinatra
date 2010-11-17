@@ -1,5 +1,5 @@
 body {
-    background-image: url("/images/background.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/background.png");
     font-family:sans-serif;
 
 }
@@ -26,7 +26,7 @@ body {
 }
 
 #controlbox {
-    background-image: url("/images/box_background.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/box_background.png");
     width: 900px;
 	height: 450px;
 }
@@ -49,13 +49,13 @@ a:hover {
 .right { float: right; }
 
 .light {
-    background-image: url("/images/t_pixel.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/t_pixel.png");
     padding: 12px;
     color: #333;
 }
 
 .dark {
-    background-image: url("/images/t_pixel_vdark.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/t_pixel_vdark.png");
     padding: 12px;
     color: #333;
 }
@@ -182,14 +182,14 @@ ul.buttonlist {
     margin: 0;
 }
 ul.buttonlist li {
-    background-image: url("/images/t_pixel_dark.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/t_pixel_dark.png");
     display: inline;
     padding: 8px 4px 4px 8px;
     text-align:center;
 }
 
 ul.buttonlist li:hover {
-    background-image: url("/images/t_pixel_hover.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/t_pixel_hover.png");
 }
 
 .flash {
@@ -211,14 +211,14 @@ ul.buttonlist li:hover {
 
 #equalizer {
     float: left;
-    background-image: url("/images/t_pixel_dark.png");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/t_pixel_dark.png");
     margin-top: 8px;
     margin-left:30px;
     width:226px;
 }
 
 #equalizer #image {
-    background-image: url("/images/equalizer.gif");
+    background-image: url("http://shell-fm-sinatra.heroku.com/images/equalizer.gif");
     background-position: -13px -30px;
     background-repeat: no-repeat;
     height:31px;
@@ -226,7 +226,7 @@ ul.buttonlist li:hover {
     opacity:0.6;
 }
 
-.ui-progressbar-value { background-image: url(/images/pbar-ani-green.gif); }
+.ui-progressbar-value { background-image: url("http://shell-fm-sinatra.heroku.com/images/pbar-ani-green.gif");}
 #progresstime {
     height: 20px;
     width: 450px;
