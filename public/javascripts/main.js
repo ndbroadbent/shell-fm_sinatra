@@ -30,7 +30,7 @@ function ajaxRefresh(repeat) {
 
 function ajaxCommand(cmd) {
     // set icon to spinner
-    $("#"+cmd).attr("src", "/images/ui-anim_basic_16x16.gif");
+    $("#"+cmd).attr("src", "http://shell-fm-sinatra.heroku.com/images/ui-anim_basic_16x16.gif");
     $.get('/cmd/'+cmd,{},function(response){
         $('#'+cmd).attr('src', '/images/'+cmd+'.png'); // set icon back to normal
         setTimeout("ajaxRefresh(false);", 2000); // refresh after delay
@@ -80,12 +80,12 @@ function updateStatus() {
         $("#message-shadow #message").html(status);
         $("#message-shadow").show();
         // set equalizer image to static gif
-        $("#equalizer #image").css("background-image", "url(/images/equalizer_paused.gif)");
+        $("#equalizer #image").css("background-image", "url(http://shell-fm-sinatra.heroku.com/images/equalizer_paused.gif)");
     } else {  // else, if the track status is 'playing'
         // hide shadowbox overlay
         $("#message-shadow").hide();
         // set equalizer image to animated gif
-        $("#equalizer #image").css("background-image", "url(/images/equalizer.gif)");
+        $("#equalizer #image").css("background-image", "url(http://shell-fm-sinatra.heroku.com/images/equalizer.gif)");
     }
 }
 

@@ -226,7 +226,7 @@ ul.buttonlist li:hover {
     opacity:0.6;
 }
 
-.ui-progressbar-value { background-image: url(/images/pbar-ani-green.gif); }
+.ui-progressbar-value { background-image: url("http://shell-fm-sinatra.heroku.com/images/pbar-ani-green.gif");}
 #progresstime {
     height: 20px;
     width: 450px;
