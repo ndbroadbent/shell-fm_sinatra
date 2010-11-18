@@ -217,3 +217,8 @@ def bookmarks
   end
 end
 
+# Evo T20 is synced to UTC. HK time is UTC +8
+def hk_time
+  Time.now + 8*60*60
+end
+
