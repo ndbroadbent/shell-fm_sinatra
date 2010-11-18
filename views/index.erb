@@ -33,7 +33,8 @@
           <div class="light right loggedin">
             Using last.fm account: <b><%= Username %></b> <br/>
             You are connecting from: <b><%= @client_ip %></b><br/>
-            <%= link_to "/config", "- view shell-fm config -"%>
+            <%= link_to "/config", "- view shell-fm config -"%><br/>
+            The time is: <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %>
           </div>
 
           <div class="dark station" id="station-link">
