@@ -12,6 +12,7 @@ function ajaxRefresh(repeat) {
         $('#album-link').html(data.album_link);
         $('#album-image').html(data.album_image);
         $("#volumeslider").slider("value", parseInt(data.volume));
+        $('#current-time').html(data.current_time);
         remain_s = data.remain_s;
         total_s = data.total_s;
         updateRemainingtime(remain_s, total_s);

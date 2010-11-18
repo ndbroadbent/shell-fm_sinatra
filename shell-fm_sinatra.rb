@@ -68,7 +68,7 @@ get '/' do
   erb :index
 end
 
-
+# AJAX refreshes page elements with json data
 get '/info.json' do
   if i = get_info
     i[:image_url] = nil if i[:image_url] == ""
@@ -91,7 +91,8 @@ get '/info.json' do
     "remain_s": #{i[:remain_s].to_i},
     "total_s": #{i[:total_s].to_i},
     "volume": #{i[:volume].to_i},
-    "status": "#{$status}"
+    "status": "#{$status}",
+    "current_time": "#{hk_time_fmt}"
     }
   }
   else
@@ -254,3 +255,7 @@ def hk_time
   Time.now + 8*60*60
 end
 
+def hk_time_fmt
+  hk_time.strftime("%Y-%m-%d %H:%M:%S")
+end
+  

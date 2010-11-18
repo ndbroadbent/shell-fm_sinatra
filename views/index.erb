@@ -34,7 +34,7 @@
             Using last.fm account: <b><%= Username %></b> <br/>
             You are connecting from: <b><%= @client_ip %></b><br/>
             <%= link_to "/config", "- view shell-fm config -"%><br/>
-            The time is: <%= hk_time.strftime("%Y-%m-%d %H:%M:%S") %>
+            The time is: <div id="current-time"><%= hk_time_fmt %></div>
           </div>
 
           <div class="dark station" id="station-link">
