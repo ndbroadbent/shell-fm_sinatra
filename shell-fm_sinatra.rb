@@ -11,24 +11,13 @@ require 'yaml'
 
 # Load config.
 config = YAML.load_file(File.join(File.dirname(__FILE__), "config.yml"))
-Iface     = config["interface"]
-PORT      = config["port"]
+Host   = config["host"]
+Port   = config["port"]
 
 # for the correct handling of different statuses.
 $status = "playing"
 # for detecting pause/play
 $last_remain = 0
-
-# Basically, I have a few different machines that I run this on. (some thin clients with wlan)
-# So I wanted an easy way to specify which IP to bind to, and my approach
-# was to specify the network interface, and parse out the IP with 'ifconfig'.
-# IP override allows me to manually set the IP, and not use an interface.
-if config["ip_override"]
-  IP = config["ip_override"] # (for testing)
-else
-  addr = `ifconfig #{Iface}`[/inet addr:(([0-9]{1,3}.)+)/,1]
-  IP = addr ? addr.strip : nil
-end
 
 # Titles for each command, to be displayed as html interface link text for each command
 CmdTitles = {"skip" => "Next",
@@ -47,7 +36,7 @@ Username   = sfm_config[/username ?= ?(.*)$/,1]
 
 # Get the index. Displays data from shell.fm and has a few commands to control the stream.
 get '/' do
-  @client_ip = @env['REMOTE_ADDR']    # Displays clients IP
+  @client_ip = @env['REMOTE_ADDR']    # Displays clients Host
   @flash = nil  # initialize a '@flash' var to display flash messages on the generated html
 
   # Gets track info from shell.fm network interface. If successful, continues
@@ -168,7 +157,7 @@ end
 
 # Runs a cmd via the shellfm network interface.
 def shellfmcmd(cmd)
-  t = TCPSocket.new(IP, PORT)
+  t = TCPSocket.new(Host, Port)
   t.print cmd + "\n"
   info = t.gets(nil)
   t.close
@@ -258,4 +247,4 @@ end
 def hk_time_fmt
   hk_time.strftime("%Y-%m-%d %H:%M:%S")
 end
-  
+
