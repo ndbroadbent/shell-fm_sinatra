@@ -32,6 +32,114 @@ CmdTitles = {"skip" => "Next",
 sfm_config = File.open("#{ENV["HOME"]}/.shell-fm/shell-fm.rc", "r").read
 Username   = sfm_config[/username ?= ?(.*)$/,1]
 
+# ------------------------------------------
+
+# Runs a cmd via the shellfm network interface.
+def shellfmcmd(cmd)
+  t = TCPSocket.new(Host, Port)
+  t.print cmd + "\n"
+  info = t.gets(nil)
+  t.close
+  return info
+  rescue
+    puts "TCP error!"
+end
+
+# Fetches shell.fm info.
+def get_info
+  info = []
+  # Try to get track info 2 times. (just in case of a random TCP error on the first attempt)
+  2.times do
+    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f||%v||%R||%d")
+    break if info
+  end
+  return false unless info
+  info = info.split("||")
+  k = %w(station_url station artist_url artist title_url title
+         album_url album image_url remaining duration volume remain_s total_s)
+  info_hash = {}
+  info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
+  info_hash[:remain_s] = info_hash[:remain_s].to_i
+  info_hash[:total_s] = info_hash[:total_s].to_i
+
+  if info_hash[:total_s] > 0
+    # Change the status to playing if it is currently stopped.
+    # (not if it is currently paused, obviously)
+    $status = "playing" if $status == "stopped"
+
+    if $last_remain == info_hash[:remain_s]
+      $status = "paused"
+    else
+      $status = "playing"
+    end
+
+  else
+    $status = "stopped"
+  end
+
+  $last_remain = info_hash[:remain_s]
+
+  # Don't let remaining seconds be a negative value. (After pause detection logic..)
+  info_hash[:remain_s] = 0 if info_hash[:remain_s] < 0
+
+  $info_hash_cache = info_hash
+end
+
+# Rails-like link generator
+def link_to(link, text)
+  "<a href='#{link}'>#{text}</a>"
+end
+
+def toggle_pause_status
+  if $status == "playing"
+    $status = "paused"
+  else
+    $status = "playing"
+  end
+end
+
+# Returns a list of the users radio-history
+def radio_history
+  if File.exist?("#{ENV["HOME"]}/.shell-fm/radio-history")
+    File.open("#{ENV["HOME"]}/.shell-fm/radio-history", "r").collect {|x| x.strip}.uniq
+  else
+    return []
+  end
+end
+
+# Returns a list of the users bookmarked stations
+def bookmarks
+  if File.exist?("#{ENV["HOME"]}/.shell-fm/bookmarks")
+    return File.open("#{ENV["HOME"]}/.shell-fm/bookmarks", "r").collect {|h|
+      h.split("=").collect {|k| k.strip }
+    }.uniq
+  else
+    return []
+  end
+end
+
+# Evo T20 is synced to UTC. HK time is UTC +8
+def hk_time
+  Time.now + 8*60*60
+end
+
+def hk_time_fmt
+  hk_time.strftime("%Y-%m-%d %H:%M:%S")
+end
+
+# -------------------------------------
+# Polls for status changes periodically, update cache.
+$info_hash_cache = {}
+
+Thread.new do
+  while true
+    get_info
+    sleep 5
+  end
+end
+
+# -------------------------------------
+# HTTP Server
 # -------------------------------------
 
 # Get the index. Displays data from shell.fm and has a few commands to control the stream.
@@ -40,7 +148,7 @@ get '/' do
   @flash = nil  # initialize a '@flash' var to display flash messages on the generated html
 
   # Gets track info from shell.fm network interface. If successful, continues
-  if i = get_info
+  if i = $info_hash_cache
     i[:image_url] = nil if i[:image_url] == ""
     @station_link = link_to(i[:station_url], i[:station])
     @artist_link  = link_to(i[:artist_url],  i[:artist])
@@ -59,7 +167,7 @@ end
 
 # AJAX refreshes page elements with json data
 get '/info.json' do
-  if i = get_info
+  if i = $info_hash_cache
     i[:image_url] = nil if i[:image_url] == ""
     @station_link = link_to(i[:station_url], i[:station])
     @artist_link  = link_to(i[:artist_url],  i[:artist])
@@ -137,130 +245,5 @@ post '/alarms' do
     f.puts params['data']
   end
   redirect '/'
-end
-
-# for lcd4linux to retrieve display info.
-get '/lcd_text/:key' do
-  case $status
-  when "stopped"
-    case params[:key]
-    when "artist"
-      return "[STOPPED]"
-    else
-      return "-"
-    end
-  else
-    case params[:key]
-    when "artist"
-      # update cached values only on an 'artist' call.
-      if i = get_info
-        $cached_title = i[:title]
-        $cached_album = i[:album]
-        $cached_duration = i[:duration]
-        return i[:artist]
-      end
-    when "title"
-      return $cached_title
-    when "album"
-      return $cached_album
-    when "duration"
-      return "[PAUSED]" if $status == "paused"
-      return $cached_duration
-    end
-  end
-end
-
-
-# Runs a cmd via the shellfm network interface.
-def shellfmcmd(cmd)
-  t = TCPSocket.new(Host, Port)
-  t.print cmd + "\n"
-  info = t.gets(nil)
-  t.close
-  return info
-  rescue
-    puts "TCP error!"
-end
-
-# Fetches shell.fm info.
-def get_info
-  info = []
-  # Try to get track info 2 times. (just in case of a random TCP error on the first attempt)
-  2.times do
-    info = shellfmcmd("info %S||%s||%A||%a||%T||%t||%L||%l||%I||%r||%f||%v||%R||%d")
-    break if info
-  end
-  return false unless info
-  info = info.split("||")
-  k = %w(station_url station artist_url artist title_url title
-         album_url album image_url remaining duration volume remain_s total_s)
-  info_hash = {}
-  info.each_with_index {|v, i| info_hash[k[i].to_sym] = v}
-  info_hash[:remain_s] = info_hash[:remain_s].to_i
-  info_hash[:total_s] = info_hash[:total_s].to_i
-
-  if info_hash[:total_s] > 0
-    # Change the status to playing if it is currently stopped.
-    # (not if it is currently paused, obviously)
-    $status = "playing" if $status == "stopped"
-
-    if $last_remain == info_hash[:remain_s]
-      $status = "paused"
-    else
-      $status = "playing"
-    end
-
-  else
-    $status = "stopped"
-  end
-
-  $last_remain = info_hash[:remain_s]
-
-  # Don't let remaining seconds be a negative value. (After pause detection logic..)
-  info_hash[:remain_s] = 0 if info_hash[:remain_s] < 0
-
-  return info_hash
-end
-
-# Rails-like link generator
-def link_to(link, text)
-  "<a href='#{link}'>#{text}</a>"
-end
-
-def toggle_pause_status
-  if $status == "playing"
-    $status = "paused"
-  else
-    $status = "playing"
-  end
-end
-
-# Returns a list of the users radio-history
-def radio_history
-  if File.exist?("#{ENV["HOME"]}/.shell-fm/radio-history")
-    File.open("#{ENV["HOME"]}/.shell-fm/radio-history", "r").collect {|x| x.strip}.uniq
-  else
-    return []
-  end
-end
-
-# Returns a list of the users bookmarked stations
-def bookmarks
-  if File.exist?("#{ENV["HOME"]}/.shell-fm/bookmarks")
-    return File.open("#{ENV["HOME"]}/.shell-fm/bookmarks", "r").collect {|h|
-      h.split("=").collect {|k| k.strip }
-    }.uniq
-  else
-    return []
-  end
-end
-
-# Evo T20 is synced to UTC. HK time is UTC +8
-def hk_time
-  Time.now + 8*60*60
-end
-
-def hk_time_fmt
-  hk_time.strftime("%Y-%m-%d %H:%M:%S")
 end
 
