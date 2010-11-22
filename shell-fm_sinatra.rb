@@ -123,6 +123,22 @@ get '/config' do
   config.gsub(/password *= *.*$/, "{{PASSWORD HIDDEN}}").gsub("\n", "<BR>")
 end
 
+# Shows a simple form to edit the alarms.yml file for the shellfm_lcd_console
+get '/alarms' do
+  @filename = File.join(File.dirname(__FILE__), "..", "shell-fm_lcd_console", "alarms.yml")
+  @data = File.open(@filename, "r").read
+
+  erb :simple_edit_form
+end
+# Shows a simple form to edit the alarms.yml file for the shellfm_lcd_console
+post '/alarms' do
+  @filename = File.join(File.dirname(__FILE__), "..", "shell-fm_lcd_console", "alarms.yml")
+  File.open(@filename, "w") do |f|
+    f.puts params['data']
+  end
+  redirect '/'
+end
+
 # for lcd4linux to retrieve display info.
 get '/lcd_text/:key' do
   case $status
