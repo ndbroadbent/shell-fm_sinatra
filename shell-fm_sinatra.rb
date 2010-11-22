@@ -257,4 +257,9 @@ get '/play_station_if_idle' do
     shellfmcmd("play lastfm://#{params['station']}")
   end
 end
+# In case we couldnt update the time before.
+get '/gettime' do
+  `sudo /usr/bin/getTime.sh &`
+  return ""
+end
 
