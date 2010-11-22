@@ -15,7 +15,7 @@ Host   = config["host"]
 Port   = config["port"]
 
 # for the correct handling of different statuses.
-$status = "playing"
+$status = :playing
 # for detecting pause/play
 $last_remain = 0
 
@@ -65,16 +65,16 @@ def get_info
   if info_hash[:total_s] > 0
     # Change the status to playing if it is currently stopped.
     # (not if it is currently paused, obviously)
-    $status = "playing" if $status == "stopped"
+    $status = :playing if $status == :stopped
 
     if $last_remain == info_hash[:remain_s]
-      $status = "paused"
+      $status = :paused
     else
-      $status = "playing"
+      $status = :playing
     end
 
   else
-    $status = "stopped"
+    $status = :stopped
   end
 
   $last_remain = info_hash[:remain_s]
@@ -91,10 +91,10 @@ def link_to(link, text)
 end
 
 def toggle_pause_status
-  if $status == "playing"
-    $status = "paused"
+  if $status == :playing
+    $status = :paused
   else
-    $status = "playing"
+    $status = :playing
   end
 end
 
@@ -188,7 +188,7 @@ get '/info.json' do
     "remain_s": #{i[:remain_s].to_i},
     "total_s": #{i[:total_s].to_i},
     "volume": #{i[:volume].to_i},
-    "status": "#{$status}",
+    "status": "#{$status.to_s}",
     "current_time": "#{hk_time_fmt}"
     }
   }
@@ -245,5 +245,16 @@ post '/alarms' do
     f.puts params['data']
   end
   redirect '/'
+end
+
+# For webhooks where a stream is triggered to play, but only if nothing is playing already.
+get '/play_station_if_idle' do
+  if $status == :paused # unpause, change station, skip
+    shellfmcmd("pause")
+    shellfmcmd("play lastfm://#{params[:station]}")
+    shellfmcmd("skip")
+  elsif $status == :stopped
+    shellfmcmd("play lastfm://#{params[:station]}")
+  end
 end
 
