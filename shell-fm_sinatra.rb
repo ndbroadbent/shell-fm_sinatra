@@ -251,10 +251,10 @@ end
 get '/play_station_if_idle' do
   if $status == :paused # unpause, change station, skip
     shellfmcmd("pause")
-    shellfmcmd("play lastfm://#{params[:station]}")
+    shellfmcmd("play lastfm://#{params['station']}")
     shellfmcmd("skip")
   elsif $status == :stopped
-    shellfmcmd("play lastfm://#{params[:station]}")
+    shellfmcmd("play lastfm://#{params['station']}")
   end
 end
 
