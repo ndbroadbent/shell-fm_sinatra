@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # Sinatra server for shell-fm. (Can be run on the same machine as shell-fm).
 # by Nathan Broadbent, 2010
 # Published under the terms of the GNU General Public License (GPL).
